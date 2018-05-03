@@ -1,0 +1,43 @@
+{% extends 'nca/base.html' %}
+
+{% block title %}
+    Index page
+{% endblock %}
+
+{% block body %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
+        {% csrf_token %}
+        <label> Game
+            <select required name="game">
+                {% for game in games %}
+                    <option value="{{ game.id }}">{{ game.game_name }}</option>
+                    <br/>
+                {% endfor %}
+            </select>
+        </label>
+        <label> Platform
+            <select required name="platform">
+                {% for platform in platforms %}
+                    <option value="{{ platform.id }}">{{ platform.platform_name }}</option>
+                    <br/>
+                {% endfor %}
+            </select>
+        </label>
+        <label> Language
+            <select required name="language">
+                {% for language in languages %}
+                    <option value="{{ language.id }}">{{ language.lang_code }}</option>
+                    <br/>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Do you have microphone
+            <input type="checkbox" name="mic"><br/>
+        </label>
+
+        <input type="submit" value="Post"/>
+    </form>
+
+{% endblock %}

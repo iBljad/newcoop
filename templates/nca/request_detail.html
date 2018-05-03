@@ -1,0 +1,21 @@
+{% extends 'nca/base.html' %}
+
+{% block title %}
+    {{ game_request }}
+{% endblock %}
+
+{% block body %}
+    Game: {{ game_request.game }} ({{ game_request.platform }})<br>
+    Language: {{ game_request.language }}<br>
+    {% if game_request.mic_present %}
+        Player have microphone<br>
+    {% endif %}
+    Published at {{ game_request.pub_date|date:"H:i, d.m.y" }} by {{ game_request.user }}<br>
+    {% if rating > 0 %}
+        Request rating: {{ rating }}<br>
+    {% endif %}
+    {% if game_request.comment|length > 0 %}
+        {{ game_request.comment }}
+    {% endif %}
+
+{% endblock %}

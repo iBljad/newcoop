@@ -43,13 +43,13 @@ class GameRequest(models.Model):
     comment = models.TextField(max_length=400, blank=True)
 
     def __str__(self):
-        return "%s by %s at %s" % (self.game, self.user, self.pub_date)
+        return "%s by %s at %s" % (self.game, self.user, self.pub_date.date())
 
 
 class RequestLikes(models.Model):
     request = models.ForeignKey(GameRequest, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    liked = models.BooleanField
+    liked = models.BooleanField()
     pub_date = models.DateTimeField('post published', auto_now=True)
 
     def __str__(self):
