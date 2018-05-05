@@ -1,21 +1,21 @@
 {% extends 'nca/base.html' %}
 
 {% block title %}
-    {{ game_request }}
+    {{ gamerequest }}
 {% endblock %}
 
 {% block body %}
-    Game: {{ game_request.game }} ({{ game_request.platform }})<br>
-    Language: {{ game_request.language }}<br>
-    {% if game_request.mic_present %}
-        Player have microphone<br>
+    Game: {{ gamerequest.game }} ({{ gamerequest.platform }})<br>
+    Language: {{ gamerequest.language }}<br>
+    {% if gamerequest.mic_present %}
+        Player have a microphone<br>
     {% endif %}
-    Published at {{ game_request.pub_date|date:"H:i, d.m.y" }} by {{ game_request.user }}<br>
-    {% if rating > 0 %}
-        Request rating: {{ rating }}<br>
+    Published at {{ gamerequest.pub_date|date:"H:i, d.m.y" }} by {{ gamerequest.user }}<br>
+    {% if likes > 0 %}
+        Likes: {{ likes }}<br>
     {% endif %}
-    {% if game_request.comment|length > 0 %}
-        {{ game_request.comment }}
+    {% if gamerequest.comment|length > 0 %}
+        {{ gamerequest.comment|linebreaks }}
     {% endif %}
 
 {% endblock %}
