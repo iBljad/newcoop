@@ -43,7 +43,12 @@ class GameRequest(models.Model):
     comment = models.TextField(max_length=400, blank=True)
 
     def __str__(self):
-        return "%s by %s at %s" % (self.game, self.user, self.pub_date.date())
+        return '%s by %s at %s' % (self.game, self.user, self.pub_date.date())
+
+    def searchable(self):
+        result = ' '
+        return result.join((self.user.username, self.game.game_name, self.platform.platform_name,
+                            self.comment.replace('\r\n', ' ')))
 
 
 class RequestLikes(models.Model):

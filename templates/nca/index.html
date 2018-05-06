@@ -5,40 +5,52 @@
 {% endblock %}
 
 {% block body %}
-    <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
-        {% csrf_token %}
-        <label> Game
-            <select required name="game">
-                {% for game in games %}
-                    <option value="{{ game.id }}">{{ game.game_name }}</option>
-                    <br/>
-                {% endfor %}
-            </select>
-        </label>
-        <label> Platform
-            <select required name="platform">
-                {% for platform in platforms %}
-                    <option value="{{ platform.id }}">{{ platform.platform_name }}</option>
-                    <br/>
-                {% endfor %}
-            </select>
-        </label>
-        <label> Language
-            <select required name="language">
-                {% for language in languages %}
-                    <option value="{{ language.id }}">{{ language.lang_code }}</option>
-                    <br/>
-                {% endfor %}
-            </select>
-        </label>
-        <label>Do you have microphone
-            <input type="checkbox" name="mic"><br/>
-        </label>
+    {#    SEARCH form #}
+    <form action="{% url 'newcoop_app:search' %}" method="get">
         <label>
-            <textarea name="comment" maxlength="400" placeholder="Type in your comment here..."></textarea>
+            <input type="text" name="query">
         </label>
-
-        <input type="submit" value="Post"/>
+        <input type="submit" value="Search requests"/>
     </form>
+
+
+    {#    REQUEST POST form #}
+    {% if user.is_authenticated %}
+        <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
+            {% csrf_token %}
+            <label> Game
+                <select required name="game">
+                    {% for game in games %}
+                        <option value="{{ game.id }}">{{ game.game_name }}</option>
+                        <br/>
+                    {% endfor %}
+                </select>
+            </label><br>
+            <label> Platform
+                <select required name="platform">
+                    {% for platform in platforms %}
+                        <option value="{{ platform.id }}">{{ platform.platform_name }}</option>
+                        <br/>
+                    {% endfor %}
+                </select>
+            </label><br>
+            <label> Language
+                <select required name="language">
+                    {% for language in languages %}
+                        <option value="{{ language.id }}">{{ language.lang_code }}</option>
+                        <br/>
+                    {% endfor %}
+                </select>
+            </label><br>
+            <label>I have a microphone
+                <input type="checkbox" name="mic">
+            </label><br>
+            <label>
+                <textarea name="comment" maxlength="400" placeholder="Type in your comment here..."></textarea>
+            </label><br>
+
+            <input type="submit" value="Post"/>
+        </form>
+    {% endif %}
 
 {% endblock %}

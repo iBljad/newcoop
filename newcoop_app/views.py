@@ -4,8 +4,12 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
+
+not_authorised = 'You are not authorised, please log in'
+server_error = 'Something went wrong'
 
 
 def index(request):
@@ -40,7 +44,7 @@ def request_post(request):
         comment = request.POST.get('comment', '')
         user = request.user
     except KeyError:
-        messages.add_message(request, messages.ERROR, 'Something went wrong')
+        messages.add_message(request, messages.ERROR, server_error)
         return HttpResponseRedirect(reverse('newcoop_app:index'))
     else:
         if user.is_authenticated:
@@ -51,7 +55,7 @@ def request_post(request):
             messages.add_message(request, messages.SUCCESS, 'Your request successfully created')
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request.id,)))
         else:
-            messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
+            messages.add_message(request, messages.WARNING, not_authorised)
             return HttpResponseRedirect(reverse('newcoop_app:index'))
 
 
@@ -61,7 +65,7 @@ def like_post(request, game_request_id):
         is_liked = True if request.POST['action'] == 'Like' else False
         game_request = GameRequest.objects.get(pk=game_request_id)
     except KeyError:
-        messages.add_message(request, messages.ERROR, 'Something went wrong')
+        messages.add_message(request, messages.ERROR, server_error)
         return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
     else:
         if user.is_authenticated:
@@ -70,7 +74,7 @@ def like_post(request, game_request_id):
             messages.add_message(request, messages.SUCCESS, 'We\'ve got your like')
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
         else:
-            messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
+            messages.add_message(request, messages.WARNING, not_authorised)
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
 
 
@@ -80,7 +84,7 @@ def comment_post(request, game_request_id):
         comment = request.POST['comment']
         game_request = GameRequest.objects.get(pk=game_request_id)
     except KeyError:
-        messages.add_message(request, messages.ERROR, 'Something went wrong')
+        messages.add_message(request, messages.ERROR, server_error)
         return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
     else:
         if user.is_authenticated:
@@ -93,7 +97,21 @@ def comment_post(request, game_request_id):
                 messages.add_message(request, messages.WARNING, 'Comment shouldn\'t be empty')
                 return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
         else:
-            messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
+            messages.add_message(request, messages.WARNING, not_authorised)
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+
+
+@csrf_exempt
+def search(request):
+    query = request.GET.get('query', '')
+    try:
+        result = GameRequest.objects.filter(active=True)
+        if len(query) > 0:
+            result = [r for r in result if query.lower() in r.searchable().lower()]
+    except Exception:
+        messages.add_message(request, messages.ERROR, server_error)
+        return HttpResponseRedirect(reverse('newcoop_app:index'))
+
+    return render(request, 'nca/search.html', {'results': result})
 
     # return HttpResponse("Hello, world. You're at the polls index.")
