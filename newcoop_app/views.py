@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import generic
 
 from .models import *
@@ -14,13 +15,6 @@ def index(request):
     return render(request, 'nca/index.html', {'games': games, 'platforms': platforms, 'languages': languages})
 
 
-# def request_detail(request, gamer_request_id):
-#     game_request = get_object_or_404(GameRequest, pk=gamer_request_id)
-#     likes = game_request.requestlikes_set.filter(liked=True).count()
-#     # round(10 * game_request.requestlikes_set.filter(liked=True).count() / game_request.requestlikes_set.count(), 2)
-#     return render(request, 'nca/request_detail.html', {'game_request': game_request, 'likes': likes})
-
-
 class RequestDetailsView(generic.DetailView):
     model = GameRequest
     template_name = 'nca/request_detail.html'
@@ -29,7 +23,10 @@ class RequestDetailsView(generic.DetailView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['likes'] = self.get_object().requestlikes_set.filter(liked=True).count()
+        game_request = self.get_object()
+        context['likes'] = game_request.requestlikes_set.filter(liked=True).count()
+        if self.request.user.is_authenticated:
+            context['voted'] = game_request.requestlikes_set.filter(liked=True, user=self.request.user).exists()
         return context
 
 
@@ -52,6 +49,24 @@ def request_post(request):
             game_request.save()
             messages.add_message(request, messages.SUCCESS, 'Your request successfully created')
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request.id,)))
+        else:
+            messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
+            return HttpResponseRedirect(reverse('newcoop_app:index'))
+
+
+def like_post(request, game_request_id):
+    try:
+        user = request.user
+        is_liked = True if request.POST['action'] == 'Like' else False
+    except KeyError:
+        messages.add_message(request, messages.ERROR, 'Something went wrong')
+        return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+    else:
+        if user.is_authenticated:
+            RequestLikes.objects.update_or_create(user=user, request_id=game_request_id,
+                                                  defaults={'liked': is_liked, 'pub_date': timezone.now()})
+            messages.add_message(request, messages.SUCCESS, 'We\'ve got your like')
+            return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
         else:
             messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
             return HttpResponseRedirect(reverse('newcoop_app:index'))

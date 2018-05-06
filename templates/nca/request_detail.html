@@ -11,11 +11,22 @@
         Player have a microphone<br>
     {% endif %}
     Published at {{ gamerequest.pub_date|date:"H:i, d.m.y" }} by {{ gamerequest.user }}<br>
-    {% if likes > 0 %}
-        Likes: {{ likes }}<br>
+    Likes: {{ likes }}
+
+    {% if user.is_authenticated and gamerequest.user != user %}
+        <form action="{% url 'newcoop_app:like_post' gamerequest.id %}" method="post">
+            {% csrf_token %}
+
+            <input type="submit" name="action" value="{% if voted %}Unlike{% else %}Like{% endif %}"/>
+        </form>
     {% endif %}
+
     {% if gamerequest.comment|length > 0 %}
         {{ gamerequest.comment|linebreaks }}
     {% endif %}
+
+
+
+
 
 {% endblock %}

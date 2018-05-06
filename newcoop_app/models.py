@@ -52,6 +52,9 @@ class RequestLikes(models.Model):
     liked = models.BooleanField()
     pub_date = models.DateTimeField('post published', auto_now=True)
 
+    class Meta:
+        unique_together = ('request', 'user',)
+
     def __str__(self):
         return "%s by %s at %s" % (self.liked, self.user, self.pub_date)
 
