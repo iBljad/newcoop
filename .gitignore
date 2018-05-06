@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+db.sqlite3
+newcoop/__pycache__/
+newcoop_app/__pycache__/
+newcoop_app/migrations/__pycache__/
+venv/

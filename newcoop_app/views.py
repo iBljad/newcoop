@@ -25,6 +25,7 @@ class RequestDetailsView(generic.DetailView):
         # Add in a QuerySet of all the books
         game_request = self.get_object()
         context['likes'] = game_request.requestlikes_set.filter(liked=True).count()
+        context['comments'] = game_request.requestcomment_set.order_by('-pub_date')
         if self.request.user.is_authenticated:
             context['voted'] = game_request.requestlikes_set.filter(liked=True, user=self.request.user).exists()
         return context
@@ -58,17 +59,41 @@ def like_post(request, game_request_id):
     try:
         user = request.user
         is_liked = True if request.POST['action'] == 'Like' else False
+        game_request = GameRequest.objects.get(pk=game_request_id)
     except KeyError:
         messages.add_message(request, messages.ERROR, 'Something went wrong')
         return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
     else:
         if user.is_authenticated:
-            RequestLikes.objects.update_or_create(user=user, request_id=game_request_id,
+            RequestLikes.objects.update_or_create(user=user, request=game_request,
                                                   defaults={'liked': is_liked, 'pub_date': timezone.now()})
             messages.add_message(request, messages.SUCCESS, 'We\'ve got your like')
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
         else:
             messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
-            return HttpResponseRedirect(reverse('newcoop_app:index'))
+            return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+
+
+def comment_post(request, game_request_id):
+    try:
+        user = request.user
+        comment = request.POST['comment']
+        game_request = GameRequest.objects.get(pk=game_request_id)
+    except KeyError:
+        messages.add_message(request, messages.ERROR, 'Something went wrong')
+        return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+    else:
+        if user.is_authenticated:
+            if len(comment) > 0:
+                request_comment = RequestComment(user=user, comment=comment, request=game_request)
+                request_comment.save()
+                messages.add_message(request, messages.SUCCESS, 'Comment posted successfully')
+                return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+            else:
+                messages.add_message(request, messages.WARNING, 'Comment shouldn\'t be empty')
+                return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
+        else:
+            messages.add_message(request, messages.WARNING, 'You are not authenticated, please log in')
+            return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
 
     # return HttpResponse("Hello, world. You're at the polls index.")

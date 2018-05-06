@@ -10,7 +10,7 @@
     {% if gamerequest.mic_present %}
         Player have a microphone<br>
     {% endif %}
-    Published at {{ gamerequest.pub_date|date:"H:i, d.m.y" }} by {{ gamerequest.user }}<br>
+    Published at {{ gamerequest.pub_date|date:"H:i, d M y" }} by {{ gamerequest.user }}<br>
     Likes: {{ likes }}
 
     {% if user.is_authenticated and gamerequest.user != user %}
@@ -23,6 +23,28 @@
 
     {% if gamerequest.comment|length > 0 %}
         {{ gamerequest.comment|linebreaks }}
+    {% endif %}
+
+    {% if comments|length > 0 %}
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    {{ comment.comment }} <br>
+                    by {{ comment.user }} at {{ comment.pub_date|date:"H:i, d M y" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'newcoop_app:comment_post' gamerequest.id %}" method="post">
+            {% csrf_token %}
+            <label>
+                <textarea required name="comment" maxlength="400" placeholder="Type in your comment here..."></textarea>
+            </label>
+            <br>
+            <input type="submit" name="action" value="Post comment"/>
+        </form>
     {% endif %}
 
 
