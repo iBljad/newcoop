@@ -1,0 +1,3 @@
+{{ object }}
+{{ object.mic_present }}
+{{ object.comment }}
