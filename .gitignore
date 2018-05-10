@@ -5,3 +5,4 @@ newcoop/__pycache__/
 newcoop_app/__pycache__/
 newcoop_app/migrations/__pycache__/
 venv/
+whoosh_index/

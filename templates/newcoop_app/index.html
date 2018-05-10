@@ -1,4 +1,4 @@
-{% extends 'nca/base.html' %}
+{% extends 'newcoop_app/base.html' %}
 
 {% block title %}
     Index page
@@ -6,9 +6,9 @@
 
 {% block body %}
     {#    SEARCH form #}
-    <form action="{% url 'newcoop_app:search' %}" method="get">
+    <form action="{% url 'haystack_search' %}" method="get">
         <label>
-            <input type="text" name="query">
+            <input type="text" name="q">
         </label>
         <input type="submit" value="Search requests"/>
     </form>

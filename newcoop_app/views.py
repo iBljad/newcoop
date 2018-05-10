@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
@@ -16,12 +15,12 @@ def index(request):
     games = Game.objects.all()
     platforms = Platform.objects.all()
     languages = Language.objects.all()
-    return render(request, 'nca/index.html', {'games': games, 'platforms': platforms, 'languages': languages})
+    return render(request, 'newcoop_app/index.html', {'games': games, 'platforms': platforms, 'languages': languages})
 
 
 class RequestDetailsView(generic.DetailView):
     model = GameRequest
-    template_name = 'nca/request_detail.html'
+    template_name = 'newcoop_app/request_detail.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -99,19 +98,5 @@ def comment_post(request, game_request_id):
         else:
             messages.add_message(request, messages.WARNING, not_authorised)
             return HttpResponseRedirect(reverse('newcoop_app:request_detail', args=(game_request_id,)))
-
-
-@csrf_exempt
-def search(request):
-    query = request.GET.get('query', '')
-    try:
-        result = GameRequest.objects.filter(active=True)
-        if len(query) > 0:
-            result = [r for r in result if query.lower() in r.searchable().lower()]
-    except Exception:
-        messages.add_message(request, messages.ERROR, server_error)
-        return HttpResponseRedirect(reverse('newcoop_app:index'))
-
-    return render(request, 'nca/search.html', {'results': result})
 
     # return HttpResponse("Hello, world. You're at the polls index.")

@@ -1,3 +1,5 @@
+django-haystack
 django
 psycopg2
 django-allauth
+whoosh
