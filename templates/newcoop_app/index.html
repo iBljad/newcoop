@@ -6,50 +6,25 @@
 
 {% block body %}
     {#    SEARCH form #}
+    {% load bootstrap4 %}
     <form action="{% url 'haystack_search' %}" method="get">
-        <label>
-            <input type="text" name="q">
-        </label>
-        <input type="submit" value="Search requests"/>
+        {% csrf_token %}
+        {% bootstrap_form search_form %}
+        {% buttons %}
+            <input type="submit" class="btn btn-primary" name="action" value="Search"/>
+        {% endbuttons %}
     </form>
 
 
     {#    REQUEST POST form #}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and post_form %}
         <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
             {% csrf_token %}
-            <label> Game
-                <select required name="game">
-                    {% for game in games %}
-                        <option value="{{ game.id }}">{{ game.game_name }}</option>
-                        <br/>
-                    {% endfor %}
-                </select>
-            </label><br>
-            <label> Platform
-                <select required name="platform">
-                    {% for platform in platforms %}
-                        <option value="{{ platform.id }}">{{ platform.platform_name }}</option>
-                        <br/>
-                    {% endfor %}
-                </select>
-            </label><br>
-            <label> Language
-                <select required name="language">
-                    {% for language in languages %}
-                        <option value="{{ language.id }}">{{ language.lang_code }}</option>
-                        <br/>
-                    {% endfor %}
-                </select>
-            </label><br>
-            <label>I have a microphone
-                <input type="checkbox" name="mic">
-            </label><br>
-            <label>
-                <textarea name="comment" maxlength="400" placeholder="Type in your comment here..."></textarea>
-            </label><br>
-
-            <input type="submit" value="Post"/>
+            {% csrf_token %}
+            {% bootstrap_form post_form %}
+            {% buttons %}
+                <input type="submit" class="btn btn-primary" name="action" value="Post request"/>
+            {% endbuttons %}
         </form>
     {% endif %}
 

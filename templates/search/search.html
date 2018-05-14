@@ -7,13 +7,6 @@
 {% block body %}
 
 
-    {% for result in page.object_list %}
-        <p>
-            <a href="{% url 'newcoop_app:request_detail' result.object.id %}">{{ result.object }}</a>
-        </p>
-    {% empty %}
-        <p>No results found.</p>
-    {% endfor %}
     <h2>Search</h2>
 
     <form method="get" action="{% url 'haystack_search' %}">
@@ -24,7 +17,7 @@
         <input type="submit" value="Search">
 
         {% if query %}
-            <h3>Results</h3>
+            {#            <h3>Results</h3>#}
 
             {% for result in page.object_list %}
                 <p>
@@ -45,7 +38,25 @@
                 </div>
             {% endif %}
         {% else %}
-            {# Show some example queries to run, maybe query syntax, something else? #}123
+            {# Show some example queries to run, maybe query syntax, something else? #}
         {% endif %}
     </form>
+
+    {% load bootstrap4 %}
+    <ul class="list-group">
+        {% for result in page.object_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'newcoop_app:request_detail' result.object.id %}">{{ result.object }}</a>
+                <a href="{% url 'newcoop_app:request_detail' result.object.id %}#comments">
+                    <span class="badge badge-primary badge-pill">
+                        {{ result.object.comments_count }} comments
+                    </span>
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">No results found</li>
+        {% endfor %}
+    </ul>
+
+
 {% endblock %}

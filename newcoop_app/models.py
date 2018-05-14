@@ -45,10 +45,8 @@ class GameRequest(models.Model):
     def __str__(self):
         return '%s by %s at %s' % (self.game, self.user, self.pub_date.date())
 
-    def searchable(self):
-        result = ' '
-        return result.join((self.user.username, self.game.game_name, self.platform.platform_name,
-                            self.comment.replace('\r\n', ' ')))
+    def comments_count(self):
+        return self.requestcomment_set.filter(active=True).count()
 
 
 class RequestLikes(models.Model):
@@ -65,6 +63,7 @@ class RequestLikes(models.Model):
 
 
 class RequestComment(models.Model):
+    active = models.BooleanField(default=True)
     request = models.ForeignKey(GameRequest, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(max_length=400, blank=True)

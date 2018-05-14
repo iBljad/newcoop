@@ -26,24 +26,30 @@
     {% endif %}
 
     {% if comments|length > 0 %}
-        <ul>
-            {% for comment in comments %}
-                <li>
-                    {{ comment.comment }} <br>
-                    by {{ comment.user }} at {{ comment.pub_date|date:"H:i, d M y" }}
-                </li>
-            {% endfor %}
-        </ul>
+        <a id="comments"></a>
+
+        {% for comment in comments %}
+            <div class="card">
+                <div class="card-header">
+                    <b>{{ comment.user }}</b> at {{ comment.pub_date|date:"H:i, d M y" }}
+                </div>
+                <div class="card-body">
+                    {{ comment.comment }}
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+
     {% endif %}
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and form %}
+        {% load bootstrap4 %}
         <form action="{% url 'newcoop_app:comment_post' gamerequest.id %}" method="post">
             {% csrf_token %}
-            <label>
-                <textarea required name="comment" maxlength="400" placeholder="Type in your comment here..."></textarea>
-            </label>
-            <br>
-            <input type="submit" name="action" value="Post comment"/>
+            {% bootstrap_form form %}
+            {% buttons %}
+                <input type="submit" class="btn btn-primary" name="action" value="Post comment"/>
+            {% endbuttons %}
         </form>
     {% endif %}
 
