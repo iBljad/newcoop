@@ -9,9 +9,12 @@ class RequestCommentForm(ModelForm):
         model = RequestComment
         fields = '__all__'
         exclude = ['pub_date', 'active']
+        labels = {
+            'comment': ''
+        }
         widgets = {
             'user': forms.HiddenInput,
-            'request': forms.HiddenInput
+            'request': forms.HiddenInput,
         }
 
 

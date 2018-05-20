@@ -5,25 +5,66 @@
 {% endblock %}
 
 {% block body %}
-    Game: {{ gamerequest.game }} ({{ gamerequest.platform }})<br>
-    Language: {{ gamerequest.language }}<br>
-    {% if gamerequest.mic_present %}
-        Player have a microphone<br>
-    {% endif %}
-    Published at {{ gamerequest.pub_date|date:"H:i, d M y" }} by {{ gamerequest.user }}<br>
-    Likes: {{ likes }}
 
-    {% if user.is_authenticated and gamerequest.user != user %}
-        <form action="{% url 'newcoop_app:like_post' gamerequest.id %}" method="post">
-            {% csrf_token %}
+    <div class="card">
+        <div class="card-header d-flex">
+            <div class="mr-auto p-2">
+                {{ gamerequest.game }} — {{ gamerequest.platform }}
+            </div>
+            <div class="p-2">
+                <span class="badge badge-primary ">
+                    {{ likes }} likes
+                </span>
+            </div>
+            <div class="p-2">
+                {% if user.is_authenticated %}
+                    <form action="{% url 'newcoop_app:like_post' gamerequest.id %}" method="post">
+                        {% csrf_token %}
 
-            <input type="submit" name="action" value="{% if voted %}Unlike{% else %}Like{% endif %}"/>
-        </form>
-    {% endif %}
+                        <input type="submit" name="action" value="{% if voted %}Unlike{% else %}Like{% endif %}"/>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    Language
+                </dt>
+                <dd class="col-sm-9">
+                    {{ gamerequest.language }}
+                </dd>
+                <dt class="col-sm-3">
+                    Have a microphone
+                </dt>
+                <dd class="col-sm-9">
+                    {% if gamerequest.mic_present %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </dd>
+                <dt class="col-sm-3">
+                    Author
+                </dt>
+                <dd class="col-sm-9">
+                    {{ gamerequest.user }}
+                </dd>
+                <dt class="col-sm-3">
+                    Last updated
+                </dt>
+                <dd class="col-sm-9">
+                    {{ gamerequest.pub_date|date:"H:i, d M y" }}
+                </dd>
 
-    {% if gamerequest.comment|length > 0 %}
-        {{ gamerequest.comment|linebreaks }}
-    {% endif %}
+            </dl>
+            <hr>
+            {% if gamerequest.comment|length > 0 %}
+                {{ gamerequest.comment|linebreaks }}
+            {% endif %}
+        </div>
+    </div>
+    <p></p>
 
     {% if comments|length > 0 %}
         <a id="comments"></a>

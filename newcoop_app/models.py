@@ -25,6 +25,14 @@ class Game(models.Model):
         return self.game_name
 
 
+class Link(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '%s — %s' % (self.game.game_name, self.platform.platform_name)
+
+
 class Language(models.Model):
     lang_code = models.CharField(max_length=10)
 
