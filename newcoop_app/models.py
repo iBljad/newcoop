@@ -8,6 +8,9 @@ class Platform(models.Model):
     def __str__(self):
         return self.platform_name
 
+    class Meta:
+        ordering = ['platform_name']
+
 
 class Genre(models.Model):
     genre_name = models.CharField(max_length=100)
@@ -23,6 +26,9 @@ class Game(models.Model):
 
     def __str__(self):
         return self.game_name
+
+    class Meta:
+        ordering = ['-pub_date']
 
 
 class Link(models.Model):

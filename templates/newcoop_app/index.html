@@ -18,6 +18,8 @@
 
     {#    REQUEST POST form #}
     {% if user.is_authenticated and post_form %}
+        {{ post_form.media.css }}
+        {{ post_form.media.js }}
         <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
             {% csrf_token %}
             {% csrf_token %}

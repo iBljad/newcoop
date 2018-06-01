@@ -1,6 +1,8 @@
+selenium
 django-haystack
 django
 psycopg2
 django-allauth
 whoosh
 django-bootstrap4
+django_select2

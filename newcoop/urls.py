@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^search/', include('haystack.urls')),
+    url(r'^select2/', include('django_select2.urls')),
 ]
