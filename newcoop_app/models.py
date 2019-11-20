@@ -39,21 +39,38 @@ class Link(models.Model):
         return '%s — %s' % (self.game.game_name, self.platform.platform_name)
 
 
-class Language(models.Model):
-    lang_code = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.lang_code
-
-
 class GameRequest(models.Model):
+    COOP_TEAMMATE = 1
+    SQUAD = 2
+    CLAN_MEMBER = 3
+    COMPETITOR = 4
+
+    REQUEST_TYPE_CHOICES = [
+        (COOP_TEAMMATE, 'Co-op teammate'),
+        (SQUAD, 'Squad member'),
+        (CLAN_MEMBER, 'Clan member'),
+        (COMPETITOR, 'Competitor')
+    ]
+
+    RU = 1
+    EN = 2
+    Other = 3
+
+    LANG_CHOICES = [
+        (RU, 'Russian'),
+        (EN, 'English'),
+        (Other, 'Other')
+    ]
+
     active = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     platform = models.ForeignKey(Platform, on_delete=models.SET_NULL, blank=True, null=True)
     pub_date = models.DateTimeField('post published', auto_now=True)
     mic_present = models.BooleanField(default=False)
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, blank=True, null=True)
+    language = models.IntegerField(choices=LANG_CHOICES)
+    # language = models.ForeignKey(Language, on_delete=models.SET_NULL, blank=True, null=True)
+    request_type = models.IntegerField(choices=REQUEST_TYPE_CHOICES)
     comment = models.TextField(max_length=400, blank=True)
 
     def __str__(self):

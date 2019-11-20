@@ -52,7 +52,8 @@ class RequestPostForm(ModelForm):
 
 
 class RequestSearchForm(forms.Form):
-    q = forms.CharField(label='Query', max_length=80)
+    q = forms.CharField(label='', max_length=80, required=False,
+                        widget=forms.TextInput(attrs={'placeholder': 'Search for requests'}))
 
 
 class SelectForm(forms.Form):

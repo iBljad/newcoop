@@ -4,7 +4,8 @@
 <head>
     {# Load the tag library #}
     {% load bootstrap4 %}
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -14,19 +15,69 @@
 </head>
 <body>
 <div class="container-fluid">
-    {# Display django.contrib.messages as Bootstrap alerts #}
-    {% bootstrap_messages %}
-    <div class="col-sm"></div>
-    <div class="col-sm">
+    <div class="row" style="height: 100vh">
+        <div class="col-xl-1 col-lg-1 d-none d-lg-block d-xl-block bg-light px-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="#">&nbsp;</a>
+            </nav>
+        </div>
+        <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-xs-12 px-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="/">GPC</a>
 
-        <h1><a href="/">Home</a><br></h1>
+                <form class="" action="{% url 'haystack_search' %}" method="get">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="q" placeholder="Search for requests"
+                               maxlength="80"
+                               class="form-control" title="" required="" id="id_q">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary" name="action" value="Search">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
 
-        {% block content %}
-        {% endblock %}
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/accounts/logout/?next{{ request.path }}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/accounts/login/?next{{ request.path }}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/accounts/signup/?next{{ request.path }}">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="container-fluid my-2">
+                {# Display django.contrib.messages as Bootstrap alerts #}
+                {% bootstrap_messages %}
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="col-xl-1 col-lg-1 d-none d-lg-block d-xl-block bg-light px-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="#">&nbsp;</a>
+            </nav>
+        </div>
     </div>
-    <div class="col-sm"></div>
 </div>
-
 </body>
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
