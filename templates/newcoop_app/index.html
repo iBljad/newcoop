@@ -9,25 +9,78 @@
     {% load bootstrap4 %}
     <form action="{% url 'haystack_search' %}" method="get">
         {% csrf_token %}
-        {% bootstrap_form search_form %}
+        {% bootstrap_form search_form layout='inline' %}
         {% buttons %}
             <input type="submit" class="btn btn-primary" name="action" value="Search"/>
         {% endbuttons %}
     </form>
+    {% if latest %}
+        <h2>Latest game requests</h2>
+        {% for result in latest %}
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{% url 'newcoop_app:request_detail' result.id %}">{{ result }}</a>
+                    <a href="{% url 'newcoop_app:request_detail' result.id %}#comments">
+                    <span class="badge badge-primary badge">
+                        {{ result.comments_count }} comments
+                    </span>
+                    </a>
+                </li>
+            </ul>
+        {% endfor %}
+    {% endif %}
 
 
     {#    REQUEST POST form #}
     {% if user.is_authenticated and post_form %}
-        {{ post_form.media.css }}
-        {{ post_form.media.js }}
-        <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
-            {% csrf_token %}
-            {% csrf_token %}
-            {% bootstrap_form post_form %}
-            {% buttons %}
-                <input type="submit" class="btn btn-primary" name="action" value="Post request"/>
-            {% endbuttons %}
-        </form>
+        <br>
+        <h2>Didnt found what you need?
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".myModal">
+                Create
+            </button>
+            your own game request!
+        </h2>
+        <div class="modal fade myModal" data-keyboard="false" role="dialog"
+             aria-labelledby="myLargeModalLabel"
+             aria-hidden="true"
+             id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Game request creation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    {{ post_form.media.css }}
+                    {{ post_form.media.js }}
+                    <form action="{% url 'newcoop_app:request_post_name' %}" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form post_form layout='horizontal' %}
+
+                        <div class="modal-footer">
+                            {% buttons %}
+                                <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
+                                <input type="submit" class="btn btn-primary" name="action" value="Post request"/>
+                            {% endbuttons %}
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $("#id_game").select2({
+                    dropdownParent: $("#myModal")
+                });
+            });
+
+        </script>
+
     {% endif %}
+</div>
 
 {% endblock %}

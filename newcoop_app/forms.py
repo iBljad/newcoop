@@ -37,18 +37,23 @@ class RequestPostForm(ModelForm):
         widgets = {
             'user': forms.HiddenInput,
             'game': DelayedModelSelect2Widget(
+                attrs={'data-width': '100%'},
                 model=Game,
                 queryset=Game.objects.all(),
                 search_fields=['game_name__icontains'],
                 dependent_fields={'platform': 'link__platform_id__exact'},
             ),
             'platform': DelayedModelSelect2Widget(
+                attrs={'data-width': '100%'},
                 model=Platform,
                 # queryset=Link.objects.all(),
                 search_fields=['platform_name__icontains'],
                 dependent_fields={'game': 'link__game_id__exact'},
             )
         }
+
+
+# class RequestSearchByGameForm(ModelForm):
 
 
 class RequestSearchForm(forms.Form):

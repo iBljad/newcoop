@@ -6,3 +6,7 @@ newcoop_app/__pycache__/
 newcoop_app/migrations/__pycache__/
 venv/
 whoosh_index/
+newcoop/local_settings.py
+newcoop_app/parser/__init__.py
+newcoop_app/static/
+postgres_public_newcoop_app_gamerequest.sql

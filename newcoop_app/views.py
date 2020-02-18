@@ -15,7 +15,11 @@ server_error = 'Something went wrong'
 def index(request):
     search_form = RequestSearchForm()
     post_form = RequestPostForm(initial={'user': request.user})
-    return render(request, 'newcoop_app/index.html', {'search_form': search_form, 'post_form': post_form})
+    latest_requests = GameRequest.objects.filter(active=True).order_by('-pub_date')[:5]
+    return render(
+        request, 'newcoop_app/index.html',
+        {'search_form': search_form, 'post_form': post_form, 'latest': latest_requests}
+    )
 
 
 class RequestDetailsView(generic.DetailView):
