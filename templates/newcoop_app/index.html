@@ -15,7 +15,7 @@
 
     {#    SEARCH form #}
     {% load bootstrap4 %}
-    <form action="{% url 'haystack_search' %}" method="get">
+    <form action="{% url 'haystack_search' %}" method="post">
         {% csrf_token %}
         {% bootstrap_form search_form layout='inline' %}
         {% buttons %}
