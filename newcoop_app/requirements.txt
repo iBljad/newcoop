@@ -11,7 +11,7 @@ django-bootstrap4==1.1.1
 django-haystack==3.0b1
 django-select2==7.2.0
 future==1.0.0
-idna==2.9
+idna==3.7
 oauthlib==3.1.0
 pefile==2019.4.18
 psycopg2==2.8.4
